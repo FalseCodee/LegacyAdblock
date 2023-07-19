@@ -1,0 +1,25 @@
+{
+  "schemaVersion": 1,
+  "id": "legacyadblock",
+  "version": "${version}",
+  "name": "LegacyAdblock",
+  "description": "",
+  "authors": [],
+  "contact": {
+    "repo": "https://github.com/liam6/LegacyAdblock"
+  },
+  "license": "All-Rights-Reserved",
+  "icon": "assets/LegacyAdblock/icon.png",
+  "environment": "*",
+  "entrypoints": {
+    "client": [],
+    "main": []
+  },
+  "mixins": [
+    "legacyadblock.mixins.json"
+  ],
+  "depends": {
+    "fabricloader": ">=${loader_version}",
+    "minecraft": "${minecraft_version}"
+  }
+}

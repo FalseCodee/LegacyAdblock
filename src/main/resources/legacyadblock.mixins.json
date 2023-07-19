@@ -1,0 +1,15 @@
+{
+  "required": true,
+  "minVersion": "0.8",
+  "package": "me.falsecode.legacyadblock.mixins",
+  "compatibilityLevel": "JAVA_17",
+  "mixins": [
+    "MixinClientConnection"
+  ],
+  "client": [
+    "MixinMinecraftClientAccessor"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}
