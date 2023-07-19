@@ -1,9 +1,9 @@
 package me.falsecode.legacyadblock;
 
-import net.fabricmc.api.ModInitializer;
+import me.falsecode.legacyadblock.utils.Timer;
+import net.minecraft.client.MinecraftClient;
 
 public class LegacyAdblock {
-    /**
-     * Runs the mod initializer.
-     */
+    public static MinecraftClient mc = MinecraftClient.getInstance();
+    public static Timer timer = new Timer();
 }

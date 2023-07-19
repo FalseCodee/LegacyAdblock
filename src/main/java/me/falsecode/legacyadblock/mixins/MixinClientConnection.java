@@ -1,7 +1,6 @@
 package me.falsecode.legacyadblock.mixins;
 
-import me.falsecode.legacyadblock.utils.Timer;
-import net.minecraft.client.MinecraftClient;
+import me.falsecode.legacyadblock.utils.StringUtils;
 import net.minecraft.entity.boss.BossBar;
 import net.minecraft.network.ClientConnection;
 import net.minecraft.network.listener.PacketListener;
@@ -10,26 +9,23 @@ import net.minecraft.network.packet.s2c.play.BossBarS2CPacket;
 import net.minecraft.network.packet.s2c.play.GameMessageS2CPacket;
 import net.minecraft.text.Text;
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-import java.util.List;
 import java.util.UUID;
+
+import static me.falsecode.legacyadblock.LegacyAdblock.mc;
+import static me.falsecode.legacyadblock.LegacyAdblock.timer;
 
 @Mixin(ClientConnection.class)
 public class MixinClientConnection {
-
-    @Unique
-    private static final Timer timer = new Timer();
-    @Unique
-    private static final MinecraftClient mc = MinecraftClient.getInstance();
     @Inject(method = "handlePacket", at = @At(value = "HEAD"), cancellable = true)
-    private static  <T extends PacketListener> void onPacket(Packet<T> packet, PacketListener listener, CallbackInfo ci){
-        if(packet instanceof GameMessageS2CPacket p) {
-            String message = concatArray(p.content().withoutStyle(), "");
-            if (message.split(" ")[0].toUpperCase().contains("[AD]")) {
+    private static  <T extends PacketListener> void onPacket(Packet<T> packet, PacketListener listener, CallbackInfo ci) {
+        if (packet instanceof GameMessageS2CPacket p) {
+            String message = StringUtils.concatArray(p.content().withoutStyle(), "");
+            String[] split = message.split(" ");
+            if (split.length >= 1 && split[0].toUpperCase().startsWith("[AD]")) {
                 ci.cancel();
             }
         } else if (packet instanceof BossBarS2CPacket p) {
@@ -51,9 +47,9 @@ public class MixinClientConnection {
 
                 @Override
                 public void updateName(UUID uuid, Text name) {
-                    if(mc.player != null && concatArray(name.withoutStyle(), "").startsWith("Sending you to ") && timer.hasTimeElapsed(100, true)) {
+                    if (mc.player != null && StringUtils.concatArray(name.withoutStyle(), "").startsWith("Sending you to ") && timer.hasTimeElapsed(100, true)) {
                         mc.player.getInventory().selectedSlot = 2;
-                        ((MixinMinecraftClientAccessor)mc).rightClick();
+                        ((MixinMinecraftClientAccessor) mc).rightClick();
                     }
                     BossBarS2CPacket.Consumer.super.updateName(uuid, name);
                 }
@@ -69,18 +65,5 @@ public class MixinClientConnection {
                 }
             });
         }
-    }
-
-    @Unique
-    private static String concatArray(List<Text> array, String concat) {
-        StringBuilder sb = new StringBuilder();
-        for(int i = 0; i < array.size(); i++) {
-            sb.append(array.get(i).getString());
-            if(i < array.size() - 1) {
-                sb.append(concat);
-            }
-        }
-
-        return sb.toString();
     }
 }
